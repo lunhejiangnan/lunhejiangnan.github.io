@@ -1,40 +1,745 @@
+以下是您需要的“奇思妙想收集器”HTML代码。它是一个功能完整的互动表单，用于收集小学生的创意发明，并具备创意分析、分类整合与亮点提取功能。
+```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 移动端自适应 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的静态网页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>奇思妙想收集器 | 小小发明家课堂</title>
+    <!-- 谷歌字体，增添童趣与科技感 -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Baloo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- QRCode 库 用于生成二维码 -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
-        /* 内嵌CSS样式，简单示例 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            font-family: "Microsoft Yahei", sans-serif;
+            background: linear-gradient(145deg, #1a2a6c, #b21f1f, #fdbb4d);
+            background-attachment: fixed;
+            font-family: 'Quicksand', 'Baloo 2', cursive, sans-serif;
+            padding: 24px 20px;
+            min-height: 100vh;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            backdrop-filter: blur(2px);
+        }
+
+        /* 标题区 + 小机器人装饰 */
+        .hero {
             text-align: center;
-            padding-top: 100px;
-            background-color: #f5f7fa;
+            margin-bottom: 30px;
+            position: relative;
         }
-        h1 {
-            color: #222;
+        .hero h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #FFE6B0, #FFF9E6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-family: 'Baloo 2', cursive;
+            letter-spacing: 2px;
+        }
+        .hero p {
+            color: #fff7e8;
+            font-size: 1.2rem;
+            background: rgba(0,0,0,0.3);
+            display: inline-block;
+            padding: 5px 20px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+        }
+        .robot-icon {
+            font-size: 3rem;
+            animation: float 3s ease-in-out infinite;
+            display: inline-block;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* 双栏布局: 左侧表单 右侧创意分析面板 */
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+        }
+        /* 表单卡片 */
+        .form-card {
+            flex: 1.2;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.93);
+            backdrop-filter: blur(12px);
+            border-radius: 58px;
+            padding: 28px 30px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,200,0.2);
+            transition: all 0.2s;
+        }
+        .form-card h2 {
+            font-size: 1.9rem;
+            color: #ff8c42;
+            border-left: 12px solid #ff6a3d;
+            padding-left: 18px;
             margin-bottom: 20px;
+            font-weight: 700;
         }
-        p {
-            color: #666;
-            font-size: 18px;
+        .form-group {
+            margin-bottom: 18px;
         }
+        label {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            color: #2d3e50;
+            margin-bottom: 6px;
+        }
+        label .required {
+            color: #e34234;
+            font-size: 1.2rem;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 34px;
+            border: 2px solid #ffe0b5;
+            background: #fffef7;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+            transition: 0.2s;
+            resize: vertical;
+        }
+        input:focus, textarea:focus {
+            border-color: #ff914d;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255,145,77,0.2);
+        }
+        textarea {
+            border-radius: 28px;
+        }
+        .btn-submit {
+            background: linear-gradient(95deg, #f7971e, #ffd200);
+            border: none;
+            padding: 14px 20px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1.3rem;
+            font-family: inherit;
+            color: #2d2f36;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 8px 0 #b25d00;
+            margin-top: 12px;
+        }
+        .btn-submit:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #b25d00;
+        }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            transform: none;
+            cursor: not-allowed;
+        }
+        /* 右侧分析区 */
+        .analysis-panel {
+            flex: 1;
+            min-width: 320px;
+            background: rgba(15, 25, 45, 0.75);
+            backdrop-filter: blur(15px);
+            border-radius: 58px;
+            padding: 24px 22px;
+            color: #f0f3fa;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,215,150,0.5);
+        }
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            border-bottom: 2px dashed #ffc857;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+        }
+        .panel-header h3 {
+            font-size: 1.7rem;
+            font-weight: 800;
+        }
+        .stats-badge {
+            background: #ffb347;
+            border-radius: 40px;
+            padding: 4px 12px;
+            color: #1e2a3a;
+            font-weight: bold;
+        }
+        .category-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 15px 0;
+        }
+        .cat-tag {
+            background: #3e2a5e;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cat-tag span.count {
+            background: #ffaa44;
+            color: #222;
+            border-radius: 30px;
+            padding: 0px 8px;
+            font-size: 0.7rem;
+        }
+        .top-ideas {
+            background: #0f172ad9;
+            border-radius: 40px;
+            padding: 12px 20px;
+            margin: 20px 0;
+        }
+        .idea-card-small {
+            background: #fff4e0;
+            color: #2c3e2f;
+            border-radius: 28px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .star-rating {
+            color: gold;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+        }
+        .creative-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .creative-item {
+            background: rgba(255,255,240,0.12);
+            border-radius: 32px;
+            margin-bottom: 14px;
+            padding: 12px 18px;
+            transition: 0.1s;
+            border-left: 6px solid #ffbc6e;
+        }
+        .creative-title {
+            font-weight: 800;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .filter-bar {
+            margin: 12px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: #2b3b4e;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .filter-btn.active {
+            background: #ff914d;
+            color: #1e1a2f;
+        }
+        .qrcode-area {
+            margin-top: 25px;
+            text-align: center;
+            background: rgba(0,0,0,0.4);
+            border-radius: 30px;
+            padding: 12px;
+        }
+        .qrcode-area p {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        #qrcode {
+            display: inline-block;
+            background: white;
+            padding: 8px;
+            border-radius: 20px;
+        }
+        .footnote {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.75rem;
+            color: #ffefc0;
+        }
+        @media (max-width: 850px) {
+            body { padding: 16px; }
+            .form-card { padding: 20px; }
+            .hero h1 { font-size: 2.2rem; }
+        }
+        button, .filter-btn { cursor: pointer; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f5e6d3; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #ff8a5c; border-radius: 10px; }
     </style>
 </head>
 <body>
-    <h1>Hello HTML</h1>
-    <p>网页部署成功！GitHub Pages / Netlify 可用</p>
+<div class="container">
+    <div class="hero">
+        <span class="robot-icon">🤖✨🧠</span>
+        <h1>小小发明家·奇思妙想收集器</h1>
+        <p>⭐ 每个烦恼都是一颗发明的种子 ⭐</p>
+    </div>
 
-    <script>
-        // 内嵌JS示例
-        console.log('页面加载完毕');
-    </script>
+    <div class="dashboard">
+        <!-- 左侧：创意提交表单 -->
+        <div class="form-card">
+            <h2>📝 递交你的发明蓝图</h2>
+            <form id="inventionForm">
+                <div class="form-group">
+                    <label>🧑‍🎨 姓名 <span class="required">*</span></label>
+                    <input type="text" id="name" required placeholder="例如：李小乐">
+                </div>
+                <div class="form-group">
+                    <label>📚 班级 <span class="required">*</span></label>
+                    <input type="text" id="class" required placeholder="例如：四（3）班">
+                </div>
+                <div class="form-group">
+                    <label>🔢 号数 <span class="required">*</span></label>
+                    <input type="number" id="number" required min="1" max="99" placeholder="学号 1~99">
+                </div>
+                <div class="form-group">
+                    <label>😩 生活中遇到的烦恼 / 不好用的东西 <span class="required">*</span></label>
+                    <textarea rows="2" id="problem" required placeholder="例：每天收拾书包很麻烦，橡皮总是滚到地上..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>💡 我想发明什么来解决？ <span class="required">*</span></label>
+                    <textarea rows="2" id="inventionName" required placeholder="例：超级智能整理书包"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>🎨 我的发明物样子是怎样的？ <span class="required">*</span></label>
+                    <textarea rows="2" id="appearance" required placeholder="描述形状、颜色、大小、材质等..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>⚙️ 我的发明物有哪些功能？ <span class="required">*</span></label>
+                    <textarea rows="2" id="functions" required placeholder="至少写出两个神奇功能！"></textarea>
+                </div>
+                <button type="submit" class="btn-submit" id="submitBtn">🚀 发射创意！飞向未来 🚀</button>
+            </form>
+        </div>
+
+        <!-- 右侧：创意分析与亮点工坊 -->
+        <div class="analysis-panel">
+            <div class="panel-header">
+                <h3>✨ 创意星河实验室 ✨</h3>
+                <div class="stats-badge" id="totalCount">0个发明家</div>
+            </div>
+            <!-- 分类整合区域 -->
+            <div style="margin-bottom: 8px;"><span>🏷️ 发明分类整合</span></div>
+            <div id="categoryContainer" class="category-cloud">
+                <div class="cat-tag">加载中...</div>
+            </div>
+
+            <!-- 亮点创意Top3 -->
+            <div class="top-ideas">
+                <span>⭐ 本周亮点发明家 ⭐</span>
+                <div id="topIdeasList">✨ 暂无亮点创意，快提交第一个奇思妙想吧！</div>
+            </div>
+
+            <!-- 筛选栏 & 创意列表 -->
+            <div class="filter-bar">
+                <button class="filter-btn active" data-filter="all">全部🧩</button>
+                <button class="filter-btn" data-filter="生活妙招">🏠 生活妙招</button>
+                <button class="filter-btn" data-filter="学习神器">📖 学习神器</button>
+                <button class="filter-btn" data-filter="环保卫士">🌱 环保卫士</button>
+                <button class="filter-btn" data-filter="未来科技">🚀 未来科技</button>
+                <button class="filter-btn" data-filter="娱乐酷玩">🎮 娱乐酷玩</button>
+            </div>
+            <div id="creativeList" class="creative-list">
+                <div style="text-align:center; padding:20px;">暂无创意，填写左侧表格吧！</div>
+            </div>
+            <!-- 二维码区 -->
+            <div class="qrcode-area">
+                <p>📱 手机扫一扫 立刻填写奇思妙想！</p>
+                <div id="qrcode"></div>
+                <p style="font-size:11px; margin-top:6px;">（当前页面链接，保存后分享给同学）</p>
+            </div>
+        </div>
+    </div>
+    <div class="footnote">
+        🌟 每一个奇思妙想都将被珍藏，还可能变成未来的超级发明！ 🌟
+    </div>
+</div>
+
+<script>
+    // ---------- 创意存储与分析模块 ----------
+    let allCreations = [];     // 存储所有创意对象
+    let currentFilter = "all";
+
+    // 辅助：生成唯一ID
+    function generateId() {
+        return Date.now() + '-' + Math.random().toString(36).substr(2, 6);
+    }
+
+    // 亮点分析函数：根据发明描述、功能、名称综合打分 (满分5星)
+    function calculateBrightnessScore(creation) {
+        const text = (creation.inventionName + " " + creation.functions + " " + creation.appearance).toLowerCase();
+        let score = 0;
+        // 词库 科技感 & 创造力
+        const keywords = [
+            "自动", "智能", "机器人", "语音", "感应", "节能", "环保", "回收", "提醒", "神奇", 
+            "飞行", "折叠", "变形", "多功能", "防摔", "防水", "速干", "制冷", "加热", "扫描", 
+            "投影", "虚拟", "AR", "VR", "清洁", "收纳", "升降", "遥控", "APP", "太阳能", "风力"
+        ];
+        for (let kw of keywords) {
+            if (text.includes(kw)) score += 1.2;
+        }
+        // 描述越详细加分 (篇幅长度)
+        if (creation.functions.length > 30) score += 1.5;
+        if (creation.appearance.length > 25) score += 1;
+        if (creation.problem.length > 20) score += 0.8;
+        // 限定最高10分，映射到星级
+        score = Math.min(score, 12);
+        let starCount = Math.floor(score / 2.2) + 1;
+        starCount = Math.min(5, Math.max(1, starCount));
+        return { star: starCount, raw: score };
+    }
+
+    // 智能分类整合 (基于发明名称+功能+问题)
+    function getCategory(creation) {
+        const combined = (creation.inventionName + " " + creation.functions + " " + creation.problem).toLowerCase();
+        if (combined.includes("书包") || combined.includes("笔") || combined.includes("本子") || combined.includes("作业") || combined.includes("课桌") || combined.includes("学习") || combined.includes("课本") || combined.includes("笔记") || combined.includes("试卷")) 
+            return "学习神器";
+        if (combined.includes("垃圾") || combined.includes("环保") || combined.includes("回收") || combined.includes("塑料") || combined.includes("植树") || combined.includes("能源") || combined.includes("低碳"))
+            return "环保卫士";
+        if (combined.includes("扫地") || combined.includes("洗碗") || combined.includes("做饭") || combined.includes("家务") || combined.includes("整理") || combined.includes("收纳") || combined.includes("清洁") || combined.includes("拖地"))
+            return "生活妙招";
+        if (combined.includes("游戏") || combined.includes("玩具") || combined.includes("娱乐") || combined.includes("VR") || combined.includes("AR") || combined.includes("好玩") || combined.includes("派对") || combined.includes("魔方"))
+            return "娱乐酷玩";
+        if (combined.includes("飞行") || combined.includes("机器人") || combined.includes("智能") || combined.includes("AI") || combined.includes("自动驾驶") || combined.includes("无人机") || combined.includes("量子") || combined.includes("太空") || combined.includes("未来"))
+            return "未来科技";
+        return "生活妙招";   // 默认
+    }
+
+    // 提取亮点创意 (取分数最高的前3)
+    function getTopBrightCreations(limit = 3) {
+        const withScore = allCreations.map(c => ({ ...c, starScore: calculateBrightnessScore(c).star }));
+        withScore.sort((a,b) => b.starScore - a.starScore);
+        return withScore.slice(0, limit);
+    }
+
+    // 分类整合统计
+    function getCategoryStats() {
+        const stats = new Map();
+        allCreations.forEach(c => {
+            const cat = getCategory(c);
+            stats.set(cat, (stats.get(cat) || 0) + 1);
+        });
+        return stats;
+    }
+
+    // 渲染分类云
+    function renderCategoryCloud() {
+        const stats = getCategoryStats();
+        const container = document.getElementById('categoryContainer');
+        if (!container) return;
+        if (allCreations.length === 0) {
+            container.innerHTML = '<div class="cat-tag">✨ 等待创意小火花 ✨</div>';
+            return;
+        }
+        let html = '';
+        for (let [cat, count] of stats.entries()) {
+            let emoji = '';
+            if (cat === '生活妙招') emoji = '🏠';
+            else if (cat === '学习神器') emoji = '📖';
+            else if (cat === '环保卫士') emoji = '🌿';
+            else if (cat === '未来科技') emoji = '🚀';
+            else if (cat === '娱乐酷玩') emoji = '🎮';
+            else emoji = '✨';
+            html += `<div class="cat-tag">${emoji} ${cat} <span class="count">${count}</span></div>`;
+        }
+        container.innerHTML = html;
+    }
+
+    // 渲染亮点TOP3
+    function renderTopIdeas() {
+        const topIdeas = getTopBrightCreations(3);
+        const container = document.getElementById('topIdeasList');
+        if (!container) return;
+        if (topIdeas.length === 0) {
+            container.innerHTML = '🌟 暂无亮点创意，鼓励学生大胆想象！';
+            return;
+        }
+        let html = '';
+        for (let idea of topIdeas) {
+            const starInfo = calculateBrightnessScore(idea);
+            const starDisplay = '⭐'.repeat(starInfo.star);
+            html += `
+                <div class="idea-card-small">
+                    <div style="flex-shrink:0; font-size:2rem;">🏆</div>
+                    <div style="flex:1">
+                        <strong>${escapeHtml(idea.name)}</strong> · ${escapeHtml(idea.inventionName)}<br>
+                        <span class="star-rating">${starDisplay}</span> 亮点指数 ${starInfo.star}/5<br>
+                        <small>✨ ${escapeHtml(idea.functions.substring(0, 45))}...</small>
+                    </div>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    }
+
+    // 根据筛选渲染创意列表
+    function renderCreativeList() {
+        let filtered = [...allCreations];
+        if (currentFilter !== "all") {
+            filtered = filtered.filter(c => getCategory(c) === currentFilter);
+        }
+        // 按提交时间倒序
+        filtered.sort((a,b) => b.timestamp - a.timestamp);
+        const listDiv = document.getElementById('creativeList');
+        if (!listDiv) return;
+        if (filtered.length === 0) {
+            listDiv.innerHTML = '<div style="text-align:center; padding:20px;">🔍 这个分类暂时没有创意，快去创造吧～</div>';
+            return;
+        }
+        let html = '';
+        for (let cr of filtered) {
+            const starObj = calculateBrightnessScore(cr);
+            const starFill = '⭐'.repeat(starObj.star) + '☆'.repeat(5-starObj.star);
+            const cat = getCategory(cr);
+            let catEmoji = '';
+            if (cat === '生活妙招') catEmoji = '🏠'; else if (cat === '学习神器') catEmoji = '📚'; else if (cat === '环保卫士') catEmoji = '🌍'; else if (cat === '未来科技') catEmoji = '⚡'; else catEmoji = '🎉';
+            html += `
+                <div class="creative-item">
+                    <div class="creative-title">
+                        <span>${catEmoji} ${escapeHtml(cr.inventionName)}</span>
+                        <span class="star-rating" style="font-size:0.8rem;">${starFill}</span>
+                    </div>
+                    <div><span style="font-weight:600;">👧 ${escapeHtml(cr.name)}</span> · ${escapeHtml(cr.class)} · ${cr.number}号</div>
+                    <div style="font-size:0.85rem;">💡 解决: ${escapeHtml(cr.problem.substring(0, 60))}${cr.problem.length>60?'…':''}</div>
+                    <div style="font-size:0.8rem; opacity:0.9;">✨ 功能亮点: ${escapeHtml(cr.functions.substring(0, 70))}${cr.functions.length>70?'…':''}</div>
+                    <div style="font-size:0.7rem; margin-top:5px;">🏷️ 分类: ${cat}  |  🌟 创意星力: ${starObj.star}/5</div>
+                </div>
+            `;
+        }
+        listDiv.innerHTML = html;
+    }
+
+    // 统一刷新分析面板
+    function refreshAnalysis() {
+        document.getElementById('totalCount').innerText = allCreations.length + "个发明家";
+        renderCategoryCloud();
+        renderTopIdeas();
+        renderCreativeList();
+        // 同步localStorage
+        localStorage.setItem('wonderCreations', JSON.stringify(allCreations));
+    }
+
+    // 添加新创意到存储（同时分析亮点分类）
+    function addNewCreation(creationData) {
+        const newId = generateId();
+        const newCreation = {
+            id: newId,
+            name: creationData.name,
+            class: creationData.class,
+            number: creationData.number,
+            problem: creationData.problem,
+            inventionName: creationData.inventionName,
+            appearance: creationData.appearance,
+            functions: creationData.functions,
+            timestamp: Date.now()
+        };
+        allCreations.unshift(newCreation); // 最新在上方展示
+        refreshAnalysis();
+        return newCreation;
+    }
+
+    // 加载本地存储数据
+    function loadStoredCreations() {
+        const stored = localStorage.getItem('wonderCreations');
+        if (stored) {
+            try {
+                allCreations = JSON.parse(stored);
+                // 保证每个对象都有必要的字段，并且顺序按时间倒排
+                if (!Array.isArray(allCreations)) allCreations = [];
+            } catch(e) { allCreations = []; }
+        } 
+        // 如果没有数据，预置两个有趣示例展示功能 (课堂演示)
+        if (allCreations.length === 0) {
+            allCreations = [
+                {
+                    id: "demo1", name: "麦小思", class: "四（2）班", number: 8,
+                    problem: "每次橡皮擦总会滚到地上找不到，而且擦不干净。",
+                    inventionName: "磁力吸尘橡皮擦", appearance: "像小火车形状，底部有磁条和微型滚刷，淡蓝色软胶材质。",
+                    functions: "1. 磁力吸附碎屑；2. 滚动即可清洁纸面；3. 自带小收纳仓。",
+                    timestamp: Date.now() - 86400000
+                },
+                {
+                    id: "demo2", name: "李小天", class: "四（1）班", number: 12,
+                    problem: "下雨天雨伞湿漉漉，带进教室弄湿地板和书本。",
+                    inventionName: "速干折叠雨伞仓", appearance: "像笔袋一样的胶囊仓，内部有纳米吸水布和微风扇。",
+                    functions: "按下按钮30秒速干；自动折叠；还可以当水杯架。",
+                    timestamp: Date.now() - 43200000
+                }
+            ];
+        }
+        refreshAnalysis();
+    }
+
+    // 辅助转义防止XSS
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // ---------- 提交表单逻辑（发送API + 本地存储） ----------
+    const form = document.getElementById('inventionForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    async function submitToAPI(formData) {
+        // 构建发送到 quickform 的 JSON 结构
+        const payload = {
+            name: formData.name,
+            class: formData.class,
+            number: parseInt(formData.number),
+            problem: formData.problem,
+            invention: formData.inventionName,
+            appearance: formData.appearance,
+            functions: formData.functions,
+            submitTime: new Date().toISOString(),
+            source: "wonder_collector_class"
+        };
+        try {
+            const response = await fetch('https://quickform.cn/api/vlpw3nk6px', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (response.ok) {
+                return { success: true, message: '数据已安全抵达创意星球🚀' };
+            } else {
+                return { success: false, message: `API响应异常: ${response.status}` };
+            }
+        } catch (error) {
+            console.error("POST error:", error);
+            return { success: false, message: '网络问题，但创意已保存在本地星球✨' };
+        }
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        // 收集表单数据
+        const nameVal = document.getElementById('name').value.trim();
+        const classVal = document.getElementById('class').value.trim();
+        const numberVal = document.getElementById('number').value.trim();
+        const problemVal = document.getElementById('problem').value.trim();
+        const inventionVal = document.getElementById('inventionName').value.trim();
+        const appearanceVal = document.getElementById('appearance').value.trim();
+        const functionsVal = document.getElementById('functions').value.trim();
+
+        if (!nameVal || !classVal || !numberVal || !problemVal || !inventionVal || !appearanceVal || !functionsVal) {
+            alert("请填满所有⭐必填项，让创意更完整哟！");
+            return;
+        }
+        if (isNaN(parseInt(numberVal))) {
+            alert("号数必须是数字哟！");
+            return;
+        }
+
+        const newData = {
+            name: nameVal, class: classVal, number: parseInt(numberVal),
+            problem: problemVal, inventionName: inventionVal,
+            appearance: appearanceVal, functions: functionsVal
+        };
+
+        // 先加到本地展示（乐观更新）
+        addNewCreation(newData);
+        // 清空表单（让下一个同学填写）
+        form.reset();
+        
+        // 提交按钮禁用一小会
+        submitBtn.disabled = true;
+        submitBtn.innerText = "🛸 创意发射中...";
+        
+        // 发送API请求
+        const result = await submitToAPI(newData);
+        if (result.success) {
+            alert("✅ " + result.message + " 你的想法将改变世界！");
+        } else {
+            alert("⚠️ " + result.message + " 已经保存到班级创意墙，教师端已记录。");
+        }
+        
+        submitBtn.disabled = false;
+        submitBtn.innerText = "🚀 发射创意！飞向未来 🚀";
+        // 刷新分析面板已被addNewCreation调用了，但可能有重复刷，没问题
+    });
+
+    // 筛选按钮交互
+    function initFilters() {
+        const btns = document.querySelectorAll('.filter-btn');
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                btns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.getAttribute('data-filter');
+                renderCreativeList();   // 根据当前allCreations和筛选重新渲染
+            });
+        });
+    }
+
+    // 生成二维码 (当前页面URL)
+    function generateQR() {
+        const qrDiv = document.getElementById('qrcode');
+        if (qrDiv) {
+            qrDiv.innerHTML = ""; // 清空
+            let pageUrl = window.location.href;
+            if (pageUrl === "about:blank" || pageUrl === "" || pageUrl.startsWith("file://")) {
+                pageUrl = "https://你的班级域名/idea.html"; // 提示部署
+                qrDiv.innerHTML = `<div style="background:white; border-radius:12px; padding:5px; font-size:12px; color:black;">💡 请部署到https服务或使用本地服务器<br>扫描实际链接</div>`;
+                return;
+            }
+            new QRCode(qrDiv, {
+                text: pageUrl,
+                width: 110,
+                height: 110,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+    }
+
+    // 初始化加载
+    loadStoredCreations();
+    initFilters();
+    generateQR();
+    // 确保响应式下重绘二维码偶尔问题，设置延迟
+    setTimeout(() => generateQR(), 200);
+</script>
 </body>
 </html>
+```
